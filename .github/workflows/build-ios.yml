@@ -23,6 +23,10 @@ jobs:
           npx cap add ios
           npx cap sync ios
 
+      - name: Aplicar ícone personalizado
+        run: |
+          sips -s format png -z 1024 1024 icon.* --out ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png
+
       - name: Compilar aplicativo sem assinatura
         run: |
           xcodebuild -workspace ios/App/App.xcworkspace \

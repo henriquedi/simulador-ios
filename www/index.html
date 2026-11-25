@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Hotmart</title>
+  
+  <!-- Tailwind CSS para o visual -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* Esconde a barra de rolagem mas permite o scroll */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+
+  <script>
+    // Logo Padrão configurada
+    const DEFAULT_LOGO_URI = "data:image/jpeg;base64,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";
+    let currentLogoURI = localStorage.getItem('hotmart_custom_logo') || DEFAULT_LOGO_URI;
+
+    // Configuração do PWA (Favicon de instalação)
+    const manifest = {
+      name: "Hotmart",
+      short_name: "Hotmart",
+      display: "standalone",
+      background_color: "#09090b",
+      theme_color: "#f97316",
+      icons: [{ src: currentLogoURI, sizes: "512x512", type: "image/png" }]
+    };
+    const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+    const link = document.createElement('link');
+    link.rel = 'manifest';
+    link.href = URL.createObjectURL(blob);
+    document.head.appendChild(link);
+    
+    // Fallback de Favicon extra para o navegador
+    const fav = document.createElement('link');
+    fav.id = 'dynamic-favicon';
+    fav.rel = 'icon';
+    fav.href = currentLogoURI;
+    document.head.appendChild(fav);
+  </script>
+</head>
+<body class="bg-black flex items-center justify-center min-h-screen font-sans text-zinc-100 selection:bg-orange-500/30 p-4">
+  
+  <!-- Container Principal do Celular -->
+  <div class="relative w-full max-w-[400px] h-[850px] max-h-[95vh] bg-zinc-950 shadow-2xl overflow-hidden rounded-[2.5rem] border-[6px] border-zinc-800 flex flex-col">
+    
+    <!-- Fake StatusBar -->
+    <div class="absolute top-0 inset-x-0 h-7 flex justify-between items-center px-6 text-[10px] font-medium text-zinc-400 z-50 pointer-events-none">
+      <span>9:41</span>
+      <div class="flex gap-1.5 items-center">
+        <i data-lucide="shield-alert" class="w-3 h-3"></i>
+        <i data-lucide="zap" class="w-3 h-3"></i>
+      </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- TELA DE AUTENTICAÇÃO (ENTRAR / CADASTRAR)                 -->
+    <!-- ========================================================= -->
+    <div id="auth-screen" class="flex-1 flex flex-col justify-center px-6 pt-10 pb-8 overflow-y-auto no-scrollbar">
+      
+      <!-- Logo & Título -->
+      <div class="flex flex-col items-center mb-8">
+        <div class="w-20 h-20 rounded-full overflow-hidden shadow-[0_0_30px_rgba(249,115,22,0.4)] mb-4 bg-orange-500">
+          <img id="auth-logo-img" alt="Hotmart Logo" class="w-full h-full object-cover" />
+        </div>
+        <h1 class="text-2xl font-bold tracking-tight">Hotmart</h1>
+        <p class="text-sm text-zinc-500 mt-1">Acesse sua conta para continuar</p>
+      </div>
+
+      <!-- Abas Entrar / Cadastrar -->
+      <div class="bg-zinc-900 p-1.5 rounded-2xl flex relative h-12 items-center mb-6">
+        <div id="auth-slider" class="absolute h-9 w-[calc(50%-6px)] bg-zinc-800 rounded-xl transition-transform duration-300 ease-out shadow-sm translate-x-0"></div>
+        <button id="tab-login" type="button" class="flex-1 relative z-10 font-semibold text-sm transition-colors text-white">Entrar</button>
+        <button id="tab-register" type="button" class="flex-1 relative z-10 font-semibold text-sm transition-colors text-zinc-500">Cadastrar</button>
+      </div>
+
+      <!-- Mensagem de Feedback -->
+      <div id="auth-msg" class="hidden mb-4 p-3 rounded-xl text-xs font-medium text-center"></div>
+
+      <!-- FORMULÁRIO DE ENTRAR -->
+      <form id="form-login" class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Gmail *</label>
+          <input id="login-email" type="email" required placeholder="seuemail@gmail.com" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Senha *</label>
+          <input id="login-pass" type="password" required placeholder="••••••••" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors" />
+        </div>
+        <button type="submit" class="w-full mt-2 bg-orange-500 text-white hover:bg-orange-600 shadow-[0_0_15px_rgba(249,115,22,0.3)] py-3.5 rounded-xl font-semibold text-sm transition-all active:scale-[0.98]">
+          Entrar
+        </button>
+      </form>
+
+      <!-- FORMULÁRIO DE CADASTRAR -->
+      <form id="form-register" class="hidden space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Gmail obrigat&oacute;rio *</label>
+          <input id="reg-email" type="email" required placeholder="seuemail@gmail.com" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Celular com DDD *</label>
+          <input id="reg-phone" type="tel" required maxlength="15" placeholder="(00) 00000-0000" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Senha (m&iacute;nimo 6 caracteres) *</label>
+          <input id="reg-pass" type="password" required minlength="6" placeholder="••••••••" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors" />
+        </div>
+        <button type="submit" class="w-full mt-2 bg-orange-500 text-white hover:bg-orange-600 shadow-[0_0_15px_rgba(249,115,22,0.3)] py-3.5 rounded-xl font-semibold text-sm transition-all active:scale-[0.98]">
+          Cadastrar Conta
+        </button>
+      </form>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- TELA PRINCIPAL DO APP (LIBERADA APÓS LOGIN)               -->
+    <!-- ========================================================= -->
+    <div id="app-screen" class="hidden flex-1 flex flex-col overflow-hidden">
+
+      <!-- Barra Discreta no Topo com E-mail Logado e Botão Sair -->
+      <div class="pt-9 pb-2.5 px-5 bg-zinc-950/90 border-b border-zinc-900 flex items-center justify-between gap-3 shrink-0">
+        <div class="flex items-center gap-2 min-w-0">
+          <div class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></div>
+          <span id="logged-email" class="text-xs text-zinc-400 truncate font-medium"></span>
+        </div>
+        <button id="btn-logout" class="shrink-0 flex items-center gap-1.5 text-xs font-medium text-zinc-400 hover:text-white bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 px-2.5 py-1.5 rounded-lg transition-colors">
+          <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+          Sair
+        </button>
+      </div>
+
+      <!-- Conteúdo Rolável -->
+      <div class="flex-1 overflow-y-auto pb-8 pt-4 no-scrollbar px-5">
+        
+        <!-- Cabeçalho -->
+        <div class="flex flex-col items-center mt-2 mb-10">
+          <!-- Botão interativo para o usuário subir a PRÓPRIA logo -->
+          <input type="file" id="logo-upload" accept="image/png, image/jpeg" class="hidden" />
+          <button id="logo-btn" class="w-20 h-20 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(249,115,22,0.4)] mb-4 relative overflow-hidden bg-orange-500 transition-transform active:scale-95 group" title="Toque para usar a sua imagem">
+             <!-- Logo Principal -->
+             <img id="main-logo-img" alt="Hotmart Logo" class="w-full h-full object-cover" />
+             
+             <!-- Overlay indicando clique -->
+             <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+               <i data-lucide="image-plus" class="w-6 h-6 text-white"></i>
+             </div>
+          </button>
+          <h1 class="text-2xl font-bold tracking-tight">Hotmart</h1>
+          <p class="text-sm text-zinc-500 mt-1">Toque na logo para alterar</p>
+        </div>
+
+        <!-- Formulário com Textos Formatados em HTML Entities para proteção anti-bug -->
+        <div class="space-y-6">
+          
+          <div>
+            <label class="block text-sm font-medium text-zinc-400 mb-1.5">Valor da opera&ccedil;&atilde;o</label>
+            <div class="relative">
+              <span id="currency-symbol" class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 font-medium">R$</span>
+              <input id="inp-value" type="text" value="97,00" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 pl-12 text-white font-medium focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-zinc-400 mb-1.5">Quantas vezes</label>
+              <input id="inp-count" type="number" min="1" value="5" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-orange-500 transition-colors" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-zinc-400 mb-1.5">Intervalo (seg)</label>
+              <input id="inp-interval" type="number" min="1" value="3" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-orange-500 transition-colors" />
+            </div>
+          </div>
+
+          <!-- Seletor de Moeda -->
+          <div class="bg-zinc-900 p-1.5 rounded-2xl flex relative h-14 items-center cursor-pointer">
+            <div id="currency-slider" class="absolute h-11 w-[calc(50%-6px)] bg-zinc-800 rounded-xl transition-transform duration-300 ease-out shadow-sm translate-x-0"></div>
+            <button id="btn-brl" class="flex-1 relative z-10 font-semibold text-sm transition-colors text-white">Real (BRL)</button>
+            <button id="btn-usd" class="flex-1 relative z-10 font-semibold text-sm transition-colors text-zinc-500">D&oacute;lar (USD)</button>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-zinc-400 mb-1.5">M&eacute;todo de pagamento</label>
+            <div class="relative">
+              <select id="inp-method" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 appearance-none font-medium">
+                <option value="Pix">Pix</option>
+                <option value="Cart&atilde;o de Cr&eacute;dito">Cart&atilde;o de Cr&eacute;dito</option>
+                <option value="Boleto">Boleto</option>
+              </select>
+              <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-500">▼</div>
+            </div>
+          </div>
+
+          <hr class="border-zinc-800" />
+
+          <!-- Permissões Nativas -->
+          <div class="space-y-3 bg-zinc-900/50 border border-zinc-800/50 p-4 rounded-2xl">
+            <div class="flex items-center gap-2 mb-2">
+              <i data-lucide="smartphone" class="text-zinc-400 w-4 h-4"></i>
+              <h3 class="text-sm font-semibold text-zinc-300">Notifica&ccedil;&otilde;es do Aparelho</h3>
+            </div>
+            <button id="btn-native-enable" class="w-full bg-zinc-800 text-zinc-200 hover:bg-zinc-700 flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl font-semibold transition-all active:scale-[0.98]">
+              Ativar notifica&ccedil;&otilde;es do aparelho
+            </button>
+            <button id="btn-native-test" class="w-full bg-zinc-800 text-zinc-200 hover:bg-zinc-700 flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl font-semibold transition-all active:scale-[0.98]">
+              Enviar notifica&ccedil;&atilde;o de teste
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer / Ações -->
+      <div class="p-5 bg-zinc-950 border-t border-zinc-900">
+        <button id="btn-start" class="w-full bg-orange-500 text-white hover:bg-orange-600 shadow-[0_0_15px_rgba(249,115,22,0.3)] flex items-center justify-center gap-2 px-4 py-4 rounded-2xl font-semibold text-lg transition-all active:scale-[0.98]">
+          <i data-lucide="play" class="w-5 h-5 fill-current"></i> Iniciar Disparos
+        </button>
+        
+        <div id="running-state" class="hidden space-y-3">
+          <div class="flex justify-between items-center px-2">
+            <span class="text-sm font-medium text-orange-500 animate-pulse flex items-center gap-2">
+              <div class="w-2 h-2 rounded-full bg-orange-500"></div>
+              Rodando...
+            </span>
+            <span id="progress-text" class="text-sm font-bold bg-zinc-900 px-3 py-1 rounded-full text-zinc-300">
+              0 / 5
+            </span>
+          </div>
+          <button id="btn-stop" class="w-full bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500/20 flex items-center justify-center gap-2 px-4 py-4 rounded-2xl font-semibold text-lg transition-all active:scale-[0.98]">
+            <i data-lucide="square" class="w-5 h-5 fill-current"></i> Parar Agora
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Barra inferior do iPhone -->
+    <div class="absolute bottom-2 inset-x-0 h-1 flex justify-center pointer-events-none">
+      <div class="w-1/3 bg-white/20 rounded-full"></div>
+    </div>
+
+  </div>
+
+  <script>
+    // 1. Inicializar Ícones e injeção de imagens
+    lucide.createIcons();
+    document.getElementById('main-logo-img').src = currentLogoURI;
+    document.getElementById('auth-logo-img').src = currentLogoURI;
+
+    // =========================================================================
+    // SISTEMA DE AUTENTICAÇÃO (LOCALSTORAGE - SEM 2FA)
+    // =========================================================================
+    const authScreen = document.getElementById('auth-screen');
+    const appScreen = document.getElementById('app-screen');
+    const authSlider = document.getElementById('auth-slider');
+    const tabLogin = document.getElementById('tab-login');
+    const tabRegister = document.getElementById('tab-register');
+    const formLogin = document.getElementById('form-login');
+    const formRegister = document.getElementById('form-register');
+    const authMsg = document.getElementById('auth-msg');
+    const loggedEmailEl = document.getElementById('logged-email');
+
+    const showAuthMsg = (text, isError = true) => {
+      authMsg.innerText = text;
+      authMsg.className = `mb-4 p-3 rounded-xl text-xs font-medium text-center ${
+        isError
+          ? 'bg-red-500/10 text-red-400 border border-red-500/20'
+          : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+      }`;
+      authMsg.classList.remove('hidden');
+    };
+
+    const hideAuthMsg = () => authMsg.classList.add('hidden');
+
+    const getUsers = () => JSON.parse(localStorage.getItem('hotmart_users') || '[]');
+    const saveUsers = (users) => localStorage.setItem('hotmart_users', JSON.stringify(users));
+
+    const checkSession = () => {
+      const sessionEmail = localStorage.getItem('hotmart_session');
+      if (sessionEmail) {
+        loggedEmailEl.innerText = sessionEmail;
+        authScreen.classList.add('hidden');
+        appScreen.classList.remove('hidden');
+      } else {
+        authScreen.classList.remove('hidden');
+        appScreen.classList.add('hidden');
+      }
+    };
+    checkSession();
+
+    const switchAuthTab = (mode, keepMsg = false) => {
+      if (!keepMsg) hideAuthMsg();
+      if (mode === 'login') {
+        authSlider.style.transform = 'translateX(0)';
+        tabLogin.classList.replace('text-zinc-500', 'text-white');
+        tabRegister.classList.replace('text-white', 'text-zinc-500');
+        formLogin.classList.remove('hidden');
+        formRegister.classList.add('hidden');
+      } else {
+        authSlider.style.transform = 'translateX(100%)';
+        tabRegister.classList.replace('text-zinc-500', 'text-white');
+        tabLogin.classList.replace('text-white', 'text-zinc-500');
+        formRegister.classList.remove('hidden');
+        formLogin.classList.add('hidden');
+      }
+    };
+
+    tabLogin.onclick = () => switchAuthTab('login');
+    tabRegister.onclick = () => switchAuthTab('register');
+
+    // Máscara automática de celular com DDD: (00) 00000-0000
+    const regPhone = document.getElementById('reg-phone');
+    regPhone.addEventListener('input', (e) => {
+      let v = e.target.value.replace(/\D/g, '').slice(0, 11);
+      if (v.length > 6) {
+        v = `(${v.slice(0, 2)}) ${v.slice(2, 7)}-${v.slice(7)}`;
+      } else if (v.length > 2) {
+        v = `(${v.slice(0, 2)}) ${v.slice(2)}`;
+      } else if (v.length > 0) {
+        v = `(${v}`;
+      }
+      e.target.value = v;
+    });
+
+    // Submit Cadastrar -> Salva no localStorage e redireciona para Entrar com Gmail preenchido
+    formRegister.onsubmit = (e) => {
+      e.preventDefault();
+      hideAuthMsg();
+
+      const email = document.getElementById('reg-email').value.trim().toLowerCase();
+      const phone = regPhone.value.trim();
+      const pass = document.getElementById('reg-pass').value;
+
+      if (!email.endsWith('@gmail.com')) {
+        return showAuthMsg("Informe um endereço válido do Gmail (@gmail.com).");
+      }
+      if (phone.replace(/\D/g, '').length < 11) {
+        return showAuthMsg("Digite um número de celular válido com DDD.");
+      }
+      if (pass.length < 6) {
+        return showAuthMsg("A senha deve ter no mínimo 6 caracteres.");
+      }
+
+      const users = getUsers();
+      if (users.some(u => u.email === email)) {
+        return showAuthMsg("Este Gmail já está cadastrado. Acesse pela aba Entrar.");
+      }
+
+      users.push({ email, phone, pass, createdAt: new Date().toISOString() });
+      saveUsers(users);
+
+      // Limpa o formulário de cadastro
+      formRegister.reset();
+
+      // Redireciona para a aba Entrar com o Gmail preenchido e foco na senha
+      document.getElementById('login-email').value = email;
+      document.getElementById('login-pass').value = '';
+      showAuthMsg("Cadastro realizado! Digite sua senha para entrar.", false);
+      switchAuthTab('login', true);
+      document.getElementById('login-pass').focus();
+    };
+
+    // Submit Entrar -> Valida e libera o app
+    formLogin.onsubmit = (e) => {
+      e.preventDefault();
+      hideAuthMsg();
+
+      const email = document.getElementById('login-email').value.trim().toLowerCase();
+      const pass = document.getElementById('login-pass').value;
+
+      if (!email.endsWith('@gmail.com')) {
+        return showAuthMsg("Digite um endereço @gmail.com válido.");
+      }
+
+      const users = getUsers();
+      const found = users.find(u => u.email === email && u.pass === pass);
+      if (!found) {
+        return showAuthMsg("Gmail ou senha incorretos.");
+      }
+
+      localStorage.setItem('hotmart_session', found.email);
+      document.getElementById('login-pass').value = '';
+      checkSession();
+    };
+
+    // Botão Sair
+    document.getElementById('btn-logout').onclick = () => {
+      stop();
+      localStorage.removeItem('hotmart_session');
+      document.getElementById('login-pass').value = '';
+      switchAuthTab('login');
+      checkSession();
+    };
+
+    // =========================================================================
+    // LÓGICA ORIGINAL DO APP HOTMART
+    // =========================================================================
+    const logoUploadInp = document.getElementById('logo-upload');
+    const logoBtn = document.getElementById('logo-btn');
+    
+    logoBtn.onclick = () => {
+      logoUploadInp.click();
+    };
+    
+    logoUploadInp.onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const base64Str = event.target.result;
+        currentLogoURI = base64Str;
+        localStorage.setItem('hotmart_custom_logo', base64Str);
+        
+        document.getElementById('main-logo-img').src = base64Str;
+        document.getElementById('auth-logo-img').src = base64Str;
+        document.getElementById('dynamic-favicon').href = base64Str;
+        
+        alert("Sua imagem foi salva no aplicativo com sucesso! As novas notificações usarão esta foto.");
+      };
+      reader.readAsDataURL(file);
+    };
+
+    // 2. Estado Global
+    let settings = { value: '97,00', count: 5, interval: 3, currency: 'BRL', method: 'Pix' };
+    let isRunning = false;
+    let timerId = null;
+    let currentProgress = 0;
+
+    // 3. Mapeamento de Elementos UI
+    const el = {
+      val: document.getElementById('inp-value'),
+      count: document.getElementById('inp-count'),
+      interval: document.getElementById('inp-interval'),
+      method: document.getElementById('inp-method'),
+      btnBrl: document.getElementById('btn-brl'),
+      btnUsd: document.getElementById('btn-usd'),
+      slider: document.getElementById('currency-slider'),
+      sym: document.getElementById('currency-symbol'),
+      btnStart: document.getElementById('btn-start'),
+      btnStop: document.getElementById('btn-stop'),
+      runningState: document.getElementById('running-state'),
+      progressText: document.getElementById('progress-text'),
+      btnNativeEnable: document.getElementById('btn-native-enable'),
+      btnNativeTest: document.getElementById('btn-native-test'),
+    };
+
+    // 4. Funções de UI
+    const setCurrency = (curr) => {
+      settings.currency = curr;
+      if (curr === 'BRL') {
+        el.slider.style.transform = 'translateX(0)';
+        el.btnBrl.classList.replace('text-zinc-500', 'text-white');
+        el.btnUsd.classList.replace('text-white', 'text-zinc-500');
+        el.sym.innerText = 'R$';
+      } else {
+        el.slider.style.transform = 'translateX(100%)';
+        el.btnUsd.classList.replace('text-zinc-500', 'text-white');
+        el.btnBrl.classList.replace('text-white', 'text-zinc-500');
+        el.sym.innerText = 'US$';
+      }
+    };
+
+    el.btnBrl.onclick = () => setCurrency('BRL');
+    el.btnUsd.onclick = () => setCurrency('USD');
+
+    const updatePermissionUI = () => {
+      if ('Notification' in window && Notification.permission === 'granted') {
+        el.btnNativeEnable.innerHTML = `<i data-lucide="check" class="w-4 h-4 text-orange-500"></i> Aparelho Ativado`;
+        lucide.createIcons();
+      }
+    };
+    updatePermissionUI();
+
+    // 5. Lógica de Disparo
+    const fireNotification = () => {
+      const curr = settings.currency === 'BRL' ? 'R$' : 'US$';
+      
+      // Gerador de 10 dígitos aleatórios (HP + 10 números)
+      const randomId = Math.floor(1000000000 + Math.random() * 9000000000); 
+
+      let title = '';
+      let body = `Sua comissão: ${curr} ${settings.value} - HP${randomId}`;
+
+      if (settings.method === 'Boleto') {
+        title = "Venda realizada com o boleto";
+      } else if (settings.method === 'Cartão de Crédito') {
+        title = "Venda realizada com Cartão de Crédito";
+      } else {
+        // Pix
+        title = "Venda realizada com o Pix";
+      }
+      
+      // Disparar APENAS Notificação Nativa do Celular
+      if ('Notification' in window && Notification.permission === 'granted') {
+        try {
+          new Notification(title, { body, icon: currentLogoURI });
+        } catch (e) {
+          console.warn("Erro ao disparar nativa", e);
+        }
+      }
+    };
+
+    // 6. Controles de Tempo
+    const stop = () => {
+      isRunning = false;
+      clearTimeout(timerId);
+      el.btnStart.classList.remove('hidden');
+      el.runningState.classList.add('hidden');
+    };
+
+    const runLoop = () => {
+      if (!isRunning) return;
+      
+      currentProgress++;
+      el.progressText.innerText = `${currentProgress} / ${settings.count}`;
+      fireNotification();
+
+      if (currentProgress >= settings.count) {
+        stop();
+      } else {
+        timerId = setTimeout(runLoop, settings.interval * 1000);
+      }
+    };
+
+    el.btnStart.onclick = () => {
+      settings.value = el.val.value;
+      settings.count = parseInt(el.count.value) || 1;
+      settings.interval = parseInt(el.interval.value) || 1;
+      settings.method = el.method.value;
+
+      isRunning = true;
+      currentProgress = 0;
+      
+      el.btnStart.classList.add('hidden');
+      el.runningState.classList.remove('hidden');
+      el.progressText.innerText = `0 / ${settings.count}`;
+      
+      runLoop();
+    };
+
+    el.btnStop.onclick = stop;
+
+    // 7. Eventos Nativos
+    el.btnNativeEnable.onclick = async () => {
+      if (!('Notification' in window)) return alert("Seu navegador não suporta notificações.");
+      const perm = await Notification.requestPermission();
+      if (perm === 'granted') {
+        alert("Notificações ativadas com sucesso!");
+        updatePermissionUI();
+      } else {
+        alert("Permissão negada. Você pode precisar liberar nas configurações do seu celular.");
+      }
+    };
+
+    el.btnNativeTest.onclick = () => {
+      if (Notification.permission !== 'granted') return alert("Ative as notificações primeiro clicando no botão acima.");
+      fireNotification();
+    };
+  </script>
+</body>
+</html>

@@ -139,13 +139,9 @@
         
         <!-- Cabeçalho -->
         <div class="flex flex-col items-center mt-2 mb-10">
-          <!-- Botão interativo para o usuário subir a PRÓPRIA logo -->
           <input type="file" id="logo-upload" accept="image/png, image/jpeg" class="hidden" />
           <button id="logo-btn" class="w-20 h-20 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(249,115,22,0.4)] mb-4 relative overflow-hidden bg-orange-500 transition-transform active:scale-95 group" title="Toque para usar a sua imagem">
-             <!-- Logo Principal -->
              <img id="main-logo-img" alt="Hotmart Logo" class="w-full h-full object-cover" />
-             
-             <!-- Overlay indicando clique -->
              <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                <i data-lucide="image-plus" class="w-6 h-6 text-white"></i>
              </div>
@@ -154,7 +150,7 @@
           <p class="text-sm text-zinc-500 mt-1">Toque na logo para alterar</p>
         </div>
 
-        <!-- Formulário com Textos Formatados em HTML Entities para proteção anti-bug -->
+        <!-- Formulário -->
         <div class="space-y-6">
           
           <div>
@@ -249,6 +245,14 @@
     document.getElementById('main-logo-img').src = currentLogoURI;
     document.getElementById('auth-logo-img').src = currentLogoURI;
 
+    // Helper para acessar o plugin nativo do Capacitor (iOS / Android)
+    const getNativeNotifications = () => {
+      if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) {
+        return window.Capacitor.Plugins.LocalNotifications;
+      }
+      return null;
+    };
+
     // =========================================================================
     // SISTEMA DE AUTENTICAÇÃO (LOCALSTORAGE - SEM 2FA)
     // =========================================================================
@@ -310,7 +314,6 @@
     tabLogin.onclick = () => switchAuthTab('login');
     tabRegister.onclick = () => switchAuthTab('register');
 
-    // Máscara automática de celular com DDD: (00) 00000-0000
     const regPhone = document.getElementById('reg-phone');
     regPhone.addEventListener('input', (e) => {
       let v = e.target.value.replace(/\D/g, '').slice(0, 11);
@@ -324,7 +327,6 @@
       e.target.value = v;
     });
 
-    // Submit Cadastrar -> Salva no localStorage e redireciona para Entrar com Gmail preenchido
     formRegister.onsubmit = (e) => {
       e.preventDefault();
       hideAuthMsg();
@@ -351,10 +353,7 @@
       users.push({ email, phone, pass, createdAt: new Date().toISOString() });
       saveUsers(users);
 
-      // Limpa o formulário de cadastro
       formRegister.reset();
-
-      // Redireciona para a aba Entrar com o Gmail preenchido e foco na senha
       document.getElementById('login-email').value = email;
       document.getElementById('login-pass').value = '';
       showAuthMsg("Cadastro realizado! Digite sua senha para entrar.", false);
@@ -362,7 +361,6 @@
       document.getElementById('login-pass').focus();
     };
 
-    // Submit Entrar -> Valida e libera o app
     formLogin.onsubmit = (e) => {
       e.preventDefault();
       hideAuthMsg();
@@ -385,7 +383,6 @@
       checkSession();
     };
 
-    // Botão Sair
     document.getElementById('btn-logout').onclick = () => {
       stop();
       localStorage.removeItem('hotmart_session');
@@ -395,14 +392,12 @@
     };
 
     // =========================================================================
-    // LÓGICA ORIGINAL DO APP HOTMART
+    // LÓGICA DO APP HOTMART + NOTIFICAÇÕES NATIVAS CAPACITOR
     // =========================================================================
     const logoUploadInp = document.getElementById('logo-upload');
     const logoBtn = document.getElementById('logo-btn');
     
-    logoBtn.onclick = () => {
-      logoUploadInp.click();
-    };
+    logoBtn.onclick = () => logoUploadInp.click();
     
     logoUploadInp.onchange = (e) => {
       const file = e.target.files[0];
@@ -418,7 +413,7 @@
         document.getElementById('auth-logo-img').src = base64Str;
         document.getElementById('dynamic-favicon').href = base64Str;
         
-        alert("Sua imagem foi salva no aplicativo com sucesso! As novas notificações usarão esta foto.");
+        alert("Sua imagem foi salva no aplicativo com sucesso!");
       };
       reader.readAsDataURL(file);
     };
@@ -466,85 +461,168 @@
     el.btnBrl.onclick = () => setCurrency('BRL');
     el.btnUsd.onclick = () => setCurrency('USD');
 
-    const updatePermissionUI = () => {
-      if ('Notification' in window && Notification.permission === 'granted') {
+    const updatePermissionUI = async () => {
+      const nativeNotif = getNativeNotifications();
+      if (nativeNotif) {
+        try {
+          const perm = await nativeNotif.checkPermissions();
+          if (perm.display === 'granted') {
+            el.btnNativeEnable.innerHTML = `<i data-lucide="check" class="w-4 h-4 text-orange-500"></i> Aparelho Ativado`;
+            lucide.createIcons();
+          }
+        } catch (e) {}
+      } else if ('Notification' in window && Notification.permission === 'granted') {
         el.btnNativeEnable.innerHTML = `<i data-lucide="check" class="w-4 h-4 text-orange-500"></i> Aparelho Ativado`;
         lucide.createIcons();
       }
     };
     updatePermissionUI();
 
-    // 5. Lógica de Disparo
-    const fireNotification = () => {
+    // Monta título e corpo de cada notificação
+    const buildNotificationContent = () => {
       const curr = settings.currency === 'BRL' ? 'R$' : 'US$';
-      
-      // Gerador de 10 dígitos aleatórios (HP + 10 números)
-      const randomId = Math.floor(1000000000 + Math.random() * 9000000000); 
-
+      const randomId = Math.floor(1000000000 + Math.random() * 9000000000);
       let title = '';
-      let body = `Sua comissão: ${curr} ${settings.value} - HP${randomId}`;
-
       if (settings.method === 'Boleto') {
         title = "Venda realizada com o boleto";
       } else if (settings.method === 'Cartão de Crédito') {
         title = "Venda realizada com Cartão de Crédito";
       } else {
-        // Pix
         title = "Venda realizada com o Pix";
       }
-      
-      // Disparar APENAS Notificação Nativa do Celular
-      if ('Notification' in window && Notification.permission === 'granted') {
+      return {
+        title,
+        body: `Sua comissão: ${curr} ${settings.value} - HP${randomId}`
+      };
+    };
+
+    // 5. Lógica de Disparo (Nativo Capacitor ou Web)
+    const fireNotification = async (delaySeconds = 1) => {
+      const { title, body } = buildNotificationContent();
+      const nativeNotif = getNativeNotifications();
+
+      if (nativeNotif) {
+        try {
+          await nativeNotif.schedule({
+            notifications: [
+              {
+                id: Math.floor(Math.random() * 2000000000),
+                title,
+                body,
+                schedule: { at: new Date(Date.now() + delaySeconds * 1000) }
+              }
+            ]
+          });
+        } catch (e) {
+          console.warn("Erro ao agendar notificação nativa", e);
+        }
+      } else if ('Notification' in window && Notification.permission === 'granted') {
         try {
           new Notification(title, { body, icon: currentLogoURI });
         } catch (e) {
-          console.warn("Erro ao disparar nativa", e);
+          console.warn("Erro ao disparar nativa web", e);
         }
       }
     };
 
     // 6. Controles de Tempo
-    const stop = () => {
+    const stop = async () => {
       isRunning = false;
       clearTimeout(timerId);
       el.btnStart.classList.remove('hidden');
       el.runningState.classList.add('hidden');
+
+      const nativeNotif = getNativeNotifications();
+      if (nativeNotif) {
+        try {
+          const pending = await nativeNotif.getPending();
+          if (pending.notifications && pending.notifications.length > 0) {
+            await nativeNotif.cancel({ notifications: pending.notifications });
+          }
+        } catch (e) {}
+      }
     };
 
     const runLoop = () => {
       if (!isRunning) return;
-      
       currentProgress++;
       el.progressText.innerText = `${currentProgress} / ${settings.count}`;
-      fireNotification();
+
+      // No navegador web, dispara em tempo real; no Capacitor já foi agendado no sistema
+      if (!getNativeNotifications()) {
+        fireNotification();
+      }
 
       if (currentProgress >= settings.count) {
-        stop();
+        isRunning = false;
+        el.btnStart.classList.remove('hidden');
+        el.runningState.classList.add('hidden');
       } else {
         timerId = setTimeout(runLoop, settings.interval * 1000);
       }
     };
 
-    el.btnStart.onclick = () => {
+    el.btnStart.onclick = async () => {
       settings.value = el.val.value;
       settings.count = parseInt(el.count.value) || 1;
       settings.interval = parseInt(el.interval.value) || 1;
       settings.method = el.method.value;
 
+      const nativeNotif = getNativeNotifications();
+      if (nativeNotif) {
+        const perm = await nativeNotif.checkPermissions();
+        if (perm.display !== 'granted') {
+          return alert("Ative as notificações primeiro clicando em 'Ativar notificações do aparelho'.");
+        }
+
+        // Agenda todas as notificações no iOS para funcionar mesmo com a tela bloqueada
+        const batch = [];
+        const baseTime = Date.now();
+        for (let i = 0; i < settings.count; i++) {
+          const { title, body } = buildNotificationContent();
+          batch.push({
+            id: Math.floor(Math.random() * 2000000000),
+            title,
+            body,
+            schedule: { at: new Date(baseTime + (i + 1) * settings.interval * 1000) }
+          });
+        }
+        await nativeNotif.schedule({ notifications: batch });
+      }
+
       isRunning = true;
       currentProgress = 0;
-      
       el.btnStart.classList.add('hidden');
       el.runningState.classList.remove('hidden');
       el.progressText.innerText = `0 / ${settings.count}`;
       
-      runLoop();
+      if (nativeNotif) {
+        timerId = setTimeout(runLoop, settings.interval * 1000);
+      } else {
+        runLoop();
+      }
     };
 
     el.btnStop.onclick = stop;
 
     // 7. Eventos Nativos
     el.btnNativeEnable.onclick = async () => {
+      const nativeNotif = getNativeNotifications();
+      if (nativeNotif) {
+        try {
+          const perm = await nativeNotif.requestPermissions();
+          if (perm.display === 'granted') {
+            alert("Notificações ativadas com sucesso!");
+            updatePermissionUI();
+          } else {
+            alert("Permissão negada. Libere em Ajustes > Notificações no seu iPhone.");
+          }
+        } catch (e) {
+          alert("Erro ao solicitar permissão: " + e.message);
+        }
+        return;
+      }
+
       if (!('Notification' in window)) return alert("Seu navegador não suporta notificações.");
       const perm = await Notification.requestPermission();
       if (perm === 'granted') {
@@ -555,7 +633,20 @@
       }
     };
 
-    el.btnNativeTest.onclick = () => {
+    el.btnNativeTest.onclick = async () => {
+      settings.value = el.val.value;
+      settings.method = el.method.value;
+
+      const nativeNotif = getNativeNotifications();
+      if (nativeNotif) {
+        const perm = await nativeNotif.checkPermissions();
+        if (perm.display !== 'granted') {
+          return alert("Ative as notificações primeiro clicando no botão acima.");
+        }
+        await fireNotification(2); // Dispara em 2 segundos (dá tempo de bloquear a tela se quiser)
+        return;
+      }
+
       if (Notification.permission !== 'granted') return alert("Ative as notificações primeiro clicando no botão acima.");
       fireNotification();
     };
